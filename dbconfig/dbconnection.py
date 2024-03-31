@@ -16,7 +16,7 @@ finally:
     if connection:
         connection.close()
         
-
+'''
 # Test Database Connection
 with cx_Oracle.connect(
     db.username,
@@ -28,4 +28,5 @@ with cx_Oracle.connect(
     cursor.execute("SELECT 'Connected successfully!' FROM dual")
     result = cursor.fetchone()
     print(result[0])
+'''
 
