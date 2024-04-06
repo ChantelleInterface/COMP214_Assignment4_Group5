@@ -98,6 +98,39 @@ def create_employee_hire_sp():
         if connection:
             connection.close()
 
+    try:
+        connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+        
+        cursor = connection.cursor()
+        
+        sql_statement = """
+
+        CREATE OR REPLACE PROCEDURE new_job(
+            p_jobid IN HR_JOBS.job_id%TYPE,
+            p_title IN HR_JOBS.job_title%TYPE, 
+            p_minsal IN HR_JOBS.min_salary%TYPE
+        ) IS
+            v_maxsal HR_JOBS.max_salary%TYPE := 2 * p_minsal;  
+        BEGIN
+            INSERT INTO HR_JOBS (job_id, job_title, min_salary, max_salary)
+            VALUES (p_jobid, p_title, p_minsal, v_maxsal);
+
+            DBMS_OUTPUT.PUT_LINE('New row added to JOBS table:');
+            DBMS_OUTPUT.PUT_LINE(p_jobid || ' | ' || p_title || ' | ' || p_minsal || ' | ' || v_maxsal);
+        END new_job;
+
+        """
+
+        cursor.execute(sql_procedure)
+
+        print("Procedure new_job created successfully!")
+
+    except cx_Oracle.Error as error:
+        print(f"Error creating procedure: {error}")
+    finally:
+        if connection:
+            connection.close()
+
 if __name__ == "__main__":
     create_employee_hire_sp()
     
