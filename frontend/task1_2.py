@@ -3,6 +3,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import date
+import cx_Oracle
 
 def hire_employee():
     def hire():
@@ -23,6 +24,30 @@ def hire_employee():
             "Marketing": 20
         }
         department_id = department_ids.get(department_value)
+        
+        connection = None
+        username = 'COMP214_W24_ers_77'
+        password = 'passwords'
+        dsn = '199.212.26.208:1521/SQLD'
+        encoding = 'UTF-8'
+        
+        try:
+            connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+        
+            cursor = connection.cursor()
+            
+            cursor.callproc('Employee_hire_sp', (first_name_value, last_name_value, email_value, phone_value, 
+                                                 hire_date_value, salary_value, job_id_value, 
+                                                 manager_value, department_value))
+            connection.commit()
+
+            print("Employee record created successfully!")
+
+        except cx_Oracle.Error as error:
+            print(f"Error creating procedure: {error}")
+        finally:
+            if connection:
+                connection.close()
 
 
     hire_window = tk.Toplevel()
@@ -66,12 +91,12 @@ def hire_employee():
     job_dropdown.grid(row=len(labels)-3, column=1, padx=10, pady=5, sticky=tk.W)
 
     # Dropdown for Manager
-    managers = ["Alexander Hunold", "Nancy Greenberg"]  # List of managers
+    managers = ["100", "101"]  # List of managers
     manager_dropdown = ttk.Combobox(hire_window, textvariable=manager, values=managers, state="readonly", width=20)
     manager_dropdown.grid(row=len(labels)-2, column=1, padx=10, pady=5, sticky=tk.W)
 
     # Dropdown for Department
-    departments = ["Administration", "Marketing"]
+    departments = ["75", "77"]
     department_dropdown = ttk.Combobox(hire_window, textvariable=department, values=departments, state="readonly", width=20)
     department_dropdown.grid(row=len(labels)-1, column=1, padx=10, pady=5, sticky=tk.W)
 
