@@ -104,6 +104,51 @@ def hire_employee():
     hire_button.grid(row=len(labels), columnspan=2, pady=10)
 
 
+def identify_job_description():
+    def search_job():
+        job_id_value = job_id_entry.get()
+
+        connection = None
+        username = 'COMP214_W24_ers_77'
+        password = 'passwords'
+        dsn = '199.212.26.208:1521/SQLD'
+        encoding = 'UTF-8'
+
+        try:
+            connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+            cursor = connection.cursor()
+
+            # Execute the SQL statement to retrieve job description
+            cursor.execute("SELECT job_title FROM jobs WHERE job_id = :job_id", {"job_id": job_id_value})
+            result = cursor.fetchone()
+
+            if result:
+                job_description_label.config(text=result[0])
+            else:
+                job_description_label.config(text="Job ID not found")
+
+        except cx_Oracle.Error as error:
+            print(f"Error retrieving job description: {error}")
+        finally:
+            if connection:
+                connection.close()
+
+    identify_job_window = tk.Toplevel()
+    identify_job_window.title("Identify Job Description")
+    identify_job_window.geometry("400x200")  # Set the size of the window
+
+    job_id_label = tk.Label(identify_job_window, text="Enter Job ID:")
+    job_id_label.pack(pady=10)
+
+    job_id_entry = tk.Entry(identify_job_window)
+    job_id_entry.pack(pady=5)
+
+    search_button = tk.Button(identify_job_window, text="Search", command=search_job)
+    search_button.pack(pady=10)
+
+    job_description_label = tk.Label(identify_job_window, text="")
+    job_description_label.pack(pady=10)
+
 def create_menu():
     root = tk.Tk()
     root.title("HR Application")
@@ -119,7 +164,7 @@ def create_menu():
     
     jobs_menu = tk.Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
-    jobs_menu.add_command(label="Job Types", command=hire_employee)
+    jobs_menu.add_command(label="Identify JOB Description", command=identify_job_description)
     jobs_menu.add_command(label="Placeholder", command=hire_employee)
     
     dept_menu = tk.Menu(menubar, tearoff=False)
