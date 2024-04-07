@@ -103,7 +103,7 @@ def hire_employee():
     hire_button = tk.Button(hire_window, text="Hire", command=hire, bd=3)
     hire_button.grid(row=len(labels), columnspan=2, pady=10)
 
-
+# Task2_1
 def identify_job_description():
     def search_job():
         job_id_value = job_id_entry.get()
@@ -118,7 +118,6 @@ def identify_job_description():
             connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
             cursor = connection.cursor()
 
-            # Execute the SQL statement to retrieve job description
             cursor.execute("SELECT job_title FROM jobs WHERE job_id = :job_id", {"job_id": job_id_value})
             result = cursor.fetchone()
 
@@ -135,7 +134,7 @@ def identify_job_description():
 
     identify_job_window = tk.Toplevel()
     identify_job_window.title("Identify Job Description")
-    identify_job_window.geometry("400x200")  # Set the size of the window
+    identify_job_window.geometry("400x200")  
 
     job_id_label = tk.Label(identify_job_window, text="Enter Job ID:")
     job_id_label.pack(pady=10)
@@ -148,6 +147,61 @@ def identify_job_description():
 
     job_description_label = tk.Label(identify_job_window, text="")
     job_description_label.pack(pady=10)
+
+def create_job():
+    def create():
+        job_id = entry_job_id.get()
+        title = entry_title.get()
+        min_salary = float(entry_min_salary.get())
+        max_salary = min_salary * 2
+
+        # Connect to MySQL database
+        try:
+            conn = mysql.connector.connect(
+            connection = None,
+            user="COMP214_W24_ers_77",
+            password="passwords",
+            dsn = "199.212.26.208:1521/SQLD",
+            encoding = "UTF-8"
+            )
+            cursor = conn.cursor()
+
+            # Call the stored procedure
+            cursor.callproc('new_job', (job_id, title, min_salary, max_salary))
+            conn.commit()
+
+            messagebox.showinfo("Success", "A new job has been created")
+
+            entry_job_id.delete(0, tk.END)
+            entry_title.delete(0, tk.END)
+            entry_min_salary.delete(0, tk.END)
+
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error", f"Error: {err}")
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    create_job_window = tk.Toplevel()
+    create_job_window.title("Create Job")
+
+    labels = ['Job ID', 'Title', 'Minimum Salary']
+    for i, label_text in enumerate(labels):
+        label = tk.Label(create_job_window, text=label_text)
+        label.grid(row=i, column=0, padx=10, pady=5, sticky="w")
+
+    entry_job_id = tk.Entry(create_job_window)
+    entry_job_id.grid(row=0, column=1, padx=10, pady=5)
+
+    entry_title = tk.Entry(create_job_window)
+    entry_title.grid(row=1, column=1, padx=10, pady=5)
+
+    entry_min_salary = tk.Entry(create_job_window)
+    entry_min_salary.grid(row=2, column=1, padx=10, pady=5)
+
+    create_button = tk.Button(create_job_window, text="CREATE JOB", command=create)
+    create_button.grid(row=3, columnspan=2, padx=10, pady=10)
 
 def create_menu():
     root = tk.Tk()
@@ -165,11 +219,11 @@ def create_menu():
     jobs_menu = tk.Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
     jobs_menu.add_command(label="Identify JOB Description", command=identify_job_description)
-    jobs_menu.add_command(label="Placeholder", command=hire_employee)
+    jobs_menu.add_command(label="Create Job", command=create_job)
     
     dept_menu = tk.Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Departments Main Menu", menu= dept_menu)
-    dept_menu.add_command(label="Department Types", command=hire_employee)
+    dept_menu.add_command(label="Department Types", command=create_job)
     dept_menu.add_command(label="Placeholder", command=hire_employee)
 
     root.mainloop()
