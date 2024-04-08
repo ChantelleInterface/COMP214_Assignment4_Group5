@@ -31,6 +31,7 @@ def hire_employee():
         dsn = '199.212.26.208:1521/SQLD'
         encoding = 'UTF-8'
         
+        '''
         try:
             connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
         
@@ -48,6 +49,7 @@ def hire_employee():
         finally:
             if connection:
                 connection.close()
+        '''
 
 
     hire_window = tk.Toplevel()
@@ -91,12 +93,12 @@ def hire_employee():
     job_dropdown.grid(row=len(labels)-3, column=1, padx=10, pady=5, sticky=tk.W)
 
     # Dropdown for Manager
-    managers = ["100", "101"]  # List of managers
+    managers = ["Alexander Hunold ", "Nancy Greenberg"]  # List of managers
     manager_dropdown = ttk.Combobox(hire_window, textvariable=manager, values=managers, state="readonly", width=20)
     manager_dropdown.grid(row=len(labels)-2, column=1, padx=10, pady=5, sticky=tk.W)
 
     # Dropdown for Department
-    departments = ["75", "77"]
+    departments = ["Administration", "Marketing"]
     department_dropdown = ttk.Combobox(hire_window, textvariable=department, values=departments, state="readonly", width=20)
     department_dropdown.grid(row=len(labels)-1, column=1, padx=10, pady=5, sticky=tk.W)
 
