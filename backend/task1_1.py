@@ -165,7 +165,7 @@ def create_employee_hire_sp():
         """
 
         cursor.execute(sql_procedure)
-        print("Salary within range of specified job!")
+        print("Procedure created successfully!")
 
     except cx_Oracle.Error as error:
         print(f"Error creating procedure: {error}")
@@ -196,11 +196,12 @@ def create_employee_hire_sp():
 
         -- Call the check_salary procedure
         check_salary(:new.job_id, :new.salary);
-        END;   
+        END;
+           
         """
 
         cursor.execute(sql_procedure)
-        print("Salary within range of specified job!")
+        print("Triggercreated successfully!")
 
     except cx_Oracle.Error as error:
         print(f"Error creating procedure: {error}")
