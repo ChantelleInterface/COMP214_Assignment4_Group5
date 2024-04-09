@@ -123,7 +123,7 @@ def update_employee_information():
 
             if row:
                     for row in cursor:
-                        grid.insert(tk.END, f"{row[0]}: {row[1]} {row[2]} {row[3]} {row[4]} {row[5]}")
+                        grid.insert(tk.END, f"{row[0]}: {row[1]} {row[2]}")
             else:
                 show_employee_label.config(text="Employee records not found")
 
