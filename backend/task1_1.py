@@ -143,21 +143,21 @@ def create_employee_hire_sp():
         
         sql_statement = """
         
-        CREATE OR REPLACE PROCEDURE check_salary(job_id IN VARCHAR2, salary IN NUMBER) AS
-        min_sal NUMBER;
-        max_sal NUMBER;
+        CREATE OR REPLACE PROCEDURE Check_salary(p_job_id IN VARCHAR2, p_salary IN NUMBER) AS
+        v_min_sal NUMBER;
+        v_max_sal NUMBER;
         
         BEGIN
         -- Get the minimum and maximum salary for the specified job
-            SELECT min_salary, max_salary INTO min_sal, max_sal
+            SELECT min_salary, max_salary INTO v_min_sal, v_max_sal
             FROM hr_jobs 
-            WHERE job_id = job_id;
+            WHERE job_id = p_job_id;
         
         -- Check if the salary is within the acceptable range
-            IF salary < min_sal OR salary > max_sal THEN
-            RAISE_APPLICATION_ERROR(-20001, 'Invalid salary ' || salary ||
-                                '. Salaries for job ' || job_id ||
-                                ' must be between ' || min_sal || ' and ' || max_sal);
+            IF salary < v_min_sal OR p_salary > v_max_sal THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Invalid salary ' || p_salary ||
+                                '. Salaries for job ' || p_job_id ||
+                                ' must be between ' || v_min_sal || ' and ' || v_max_sal);
             END IF;
         END;
         

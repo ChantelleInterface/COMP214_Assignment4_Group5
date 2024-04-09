@@ -18,13 +18,6 @@ def hire_employee():
         job_id_value = job_id.get()
         manager_value = manager.get()
         department_value = department.get()
-
-        # Retrieve the department ID based on the selected department
-        department_ids = {
-            "Administration": 10,
-            "Marketing": 20
-        }
-        department_id = department_ids.get(department_value)
         
         connection = None
         username = 'COMP214_W24_ers_77'
@@ -38,10 +31,15 @@ def hire_employee():
         
             cursor = connection.cursor()
             cursor.execute("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD'")
+            
+            # Task 3: Test Case 1
+            cursor.callproc('Check_salary', job_id_value, salary_value)
 
             cursor.callproc('Employee_hire_sp', (first_name_value, last_name_value, email_value, phone_value, 
                                                  hire_date_value, salary_value, job_id_value, 
                                                  manager_value, department_value))
+            
+        
             connection.commit()
 
             print("Employee record created successfully!")
@@ -91,16 +89,16 @@ def hire_employee():
         "Sales Representative": "SA_REP",
         "Sales Manager": "SA_MAN"
     }
-    job_dropdown = ttk.Combobox(hire_window, textvariable=job_id, values=list(jobs.keys()), state="readonly", width=20)
+    job_dropdown = ttk.Combobox(hire_window, textvariable=job_id, values=list(jobs.values()), state="readonly", width=20)
     job_dropdown.grid(row=len(labels)-3, column=1, padx=10, pady=5, sticky=tk.W)
 
     # Dropdown for Manager
-    managers = ["Alexander Hunold ", "Nancy Greenberg"]  # List of managers
+    managers = [103, 108]  # List of managers
     manager_dropdown = ttk.Combobox(hire_window, textvariable=manager, values=managers, state="readonly", width=20)
     manager_dropdown.grid(row=len(labels)-2, column=1, padx=10, pady=5, sticky=tk.W)
 
     # Dropdown for Department
-    departments = ["Administration", "Marketing"]
+    departments = [60, 100]
     department_dropdown = ttk.Combobox(hire_window, textvariable=department, values=departments, state="readonly", width=20)
     department_dropdown.grid(row=len(labels)-1, column=1, padx=10, pady=5, sticky=tk.W)
 
@@ -167,8 +165,11 @@ def update_employee_information():
             try:
                 connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
                 cursor = connection.cursor()
-
+                
                 cursor.execute(f"UPDATE HR_EMPLOYEES SET SALARY='{new_salary}', PHONE_NUMBER='{new_phone}', EMAIL='{new_email}' WHERE employee_id='{employee_id}'")
+                
+                # Task 3: Test Case 2 & Test Case 3
+                cursor.calltrigger('CHECK_SALARY_TRG')
                 
                 updated_record_label.config(text="Record updated successfully!")
 
