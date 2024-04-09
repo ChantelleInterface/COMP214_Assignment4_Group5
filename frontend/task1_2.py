@@ -5,6 +5,7 @@ from tkinter import ttk, messagebox
 from datetime import date
 import cx_Oracle
 
+# Task1_1 & Task1_2
 def hire_employee():
     def hire():
         # Get the data from the entry fields
@@ -105,8 +106,115 @@ def hire_employee():
     hire_button = tk.Button(hire_window, text="Hire", command=hire, bd=3)
     hire_button.grid(row=len(labels), columnspan=2, pady=10)
 
+#Task1_3
+def update_employee_information():
+    def show_employees():
+        connection = None
+        username = 'COMP214_W24_ers_77'
+        password = 'passwords'
+        dsn = '199.212.26.208:1521/SQLD'
+        encoding = 'UTF-8'
+  
+        try:
+            connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT employee_id, first_name, last_name FROM HR_EMPLOYEES")
+            row = cursor.fetchone()
+
+            if row:
+                    for row in cursor:
+                        grid.insert(tk.END, f"{row[0]}: {row[1]} {row[2]}")
+            else:
+                show_employee_label.config(text="Employee records not found")
+
+        except cx_Oracle.Error as error:
+            print(f"Error retrieving job description: {error}")
+        finally:
+            if connection:
+                connection.close()
+
+    show_employee_window = tk.Toplevel()
+    show_employee_window.title("Employee Records")
+    show_employee_window.geometry("400x400")  
+
+    show_employee_button = tk.Button(show_employee_window, text="Show Employees", command=show_employees)
+    show_employee_button.pack(padx=10, pady=10)
+
+    show_employee_label = tk.Label(show_employee_window, text="")
+    show_employee_label.pack(pady=10)
+
+    # Create a grid to display employee data
+    grid = tk.Listbox(show_employee_window, selectmode=tk.SINGLE)
+    grid.pack()
+    
+    def update_employee_window():
+        
+        def update_employee():
+        
+            connection = None
+            username = 'COMP214_W24_ers_77'
+            password = 'passwords'
+            dsn = '199.212.26.208:1521/SQLD'
+            encoding = 'UTF-8'
+        
+            employee_id = employee_id_entry.get()  
+            new_salary = salary_entry.get()
+            new_phone =  phone_entry.get()
+            new_email =  email_entry.get()
+        
+            try:
+                connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+                cursor = connection.cursor()
+
+                cursor.execute(f"UPDATE HR_EMPLOYEES SET SALARY='{new_salary}', PHONE_NUMBER='{new_phone}', EMAIL='{new_email}' WHERE employee_id='{employee_id}'")
+                
+                updated_record_label.config(text="Record updated successfully!")
+
+            except cx_Oracle.Error as error:
+                print(f"Error updating record: {error}")
+                updated_record_label.config(text="Record not updated successfully. Please try again.")
+            finally:
+                if connection:
+                    connection.commit()
+                    connection.close()
+        
+        edit_employee_window = tk.Toplevel()
+        edit_employee_window.title("Update Employee Record")
+        edit_employee_window.geometry("400x400") 
+
+        # Create labels and entry fields for SALARY, PHONE, and EMAIL
+        employee_id_label = tk.Label(edit_employee_window, text="EMPLOYEE ID:")
+        employee_id_entry = tk.Entry(edit_employee_window)
+        salary_label = tk.Label(edit_employee_window, text="SALARY:")
+        salary_entry = tk.Entry(edit_employee_window)
+        phone_label = tk.Label(edit_employee_window, text="PHONE:")
+        phone_entry = tk.Entry(edit_employee_window)
+        email_label = tk.Label(edit_employee_window, text="EMAIL:")
+        email_entry = tk.Entry(edit_employee_window)
+        
+        updated_record_label = tk.Label(edit_employee_window, text="")
+
+        # Grid layout
+        employee_id_label.grid(row=0, column=0)
+        employee_id_entry.grid(row=0, column=1)
+        salary_label.grid(row=1, column=0)
+        salary_entry.grid(row=1, column=1)
+        phone_label.grid(row=2, column=0)
+        phone_entry.grid(row=2, column=1)
+        email_label.grid(row=3, column=0)
+        email_entry.grid(row=3, column=1)
+        updated_record_label.grid(row=5, column=1)
+
+        update_button = tk.Button(edit_employee_window, text="Update", command=update_employee)
+        update_button.grid(row=4, column=1)
+        
+    show_employeee_button = tk.Button(show_employee_window, text="Show Employeees", command=update_employee_window)
+    show_employeee_button.pack(padx=10, pady=10)
+    
+    
 # Task2_1
-def identify_job_description():
+def identify_job_description(): 
     def search_job():
         job_id_value = job_id_entry.get()
 
@@ -120,7 +228,7 @@ def identify_job_description():
             connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
             cursor = connection.cursor()
 
-            cursor.execute("SELECT job_title FROM jobs WHERE job_id = :job_id", {"job_id": job_id_value})
+            cursor.execute("SELECT job_title FROM hr_jobs WHERE job_id = :job_id", {"job_id": job_id_value})
             result = cursor.fetchone()
 
             if result:
