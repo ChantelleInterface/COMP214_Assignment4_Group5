@@ -209,8 +209,8 @@ def update_employee_information():
         update_button = tk.Button(edit_employee_window, text="Update", command=update_employee)
         update_button.grid(row=4, column=1)
         
-    show_employeee_button = tk.Button(show_employee_window, text="Show Employeees", command=update_employee_window)
-    show_employeee_button.pack(padx=10, pady=10)
+    edit_employee_button = tk.Button(show_employee_window, text="Edit an Employee", command=update_employee_window)
+    edit_employee_button.pack(padx=10, pady=10)
     
     
 # Task2_1
@@ -336,7 +336,7 @@ def create_menu():
             employee_menu = tk.Menu(menubar, tearoff=False)
             menubar.add_cascade(label="Employee Main Menu", menu=employee_menu)
             employee_menu.add_command(label="Hire Employee", command=hire_employee)
-            employee_menu.add_command(label="Placeholder", command=hire_employee)
+            employee_menu.add_command(label="Update Employee", command=update_employee_information)
             
             jobs_menu = tk.Menu(menubar, tearoff=False)
             menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
