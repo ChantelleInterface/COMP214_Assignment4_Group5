@@ -204,31 +204,104 @@ def create_job():
 
     create_button = tk.Button(create_job_window, text="CREATE JOB", command=create)
     create_button.grid(row=3, columnspan=2, padx=10, pady=10)
+    
+    
 
 def create_menu():
-    root = tk.Tk()
-    root.title("HR Application")
-    root.geometry("500x300")
 
-    menubar = tk.Menu(root)
-    root.config(menu=menubar)
+    def login():
+        
+        username = username_entry.get()
+        password = password_entry.get()
 
-    employee_menu = tk.Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="Employee Main Menu", menu=employee_menu)
-    employee_menu.add_command(label="Hire Employee", command=hire_employee)
-    employee_menu.add_command(label="Placeholder", command=hire_employee)
+        
+        if username == "admin" and password == "password":
     
-    jobs_menu = tk.Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
-    jobs_menu.add_command(label="Identify JOB Description", command=identify_job_description)
-    jobs_menu.add_command(label="Create Job", command=create_job)
-    
-    dept_menu = tk.Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="Departments Main Menu", menu= dept_menu)
-    dept_menu.add_command(label="Department Types", command=create_job)
-    dept_menu.add_command(label="Placeholder", command=hire_employee)
+            login_window.destroy()
+            root = tk.Tk()
+            root.title("HR Portal")
+            root.geometry("500x300")
 
-    root.mainloop()
+            menubar = tk.Menu(root)
+            root.config(menu=menubar)
+
+            employee_menu = tk.Menu(menubar, tearoff=False)
+            menubar.add_cascade(label="Employee Main Menu", menu=employee_menu)
+            employee_menu.add_command(label="Hire Employee", command=hire_employee)
+            employee_menu.add_command(label="Placeholder", command=hire_employee)
+            
+            jobs_menu = tk.Menu(menubar, tearoff=False)
+            menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
+            jobs_menu.add_command(label="Identify JOB Description", command=identify_job_description)
+            jobs_menu.add_command(label="Create Job", command=create_job)
+            
+            dept_menu = tk.Menu(menubar, tearoff=False)
+            menubar.add_cascade(label="Departments Main Menu", menu= dept_menu)
+            dept_menu.add_command(label="Department Types", command=create_job)
+            dept_menu.add_command(label="Placeholder", command=hire_employee)
+
+            # Title 
+            title_label = tk.Label(root, text="HR Portal", font=("Times New Roman", 20, "bold"))
+            title_label.pack(pady=20)
+
+            message_label = tk.Label(root, text="Welcome to the HR portal.", font=("Times New Roman", 17))
+            message_label.pack(pady=10)
+
+            message_label = tk.Label(root, text="Here you will be able to hire new employees, edit existing employees,\nfind job information, and create new jobs.", font=("Times New Roman", 12))
+            message_label.pack(pady=10)
+
+            
+            
+            
+            root.mainloop()
+        else:
+
+            messagebox.showerror("Login Failed", "Invalid username or password")
+
+    
+    def toggle_hint():
+        
+        if hint_label.cget("text") == "":
+            hint_label.config(text="Hint: The username: admin, password: password'")
+        else:
+            hint_label.config(text="")
+
+    #login window
+    login_window = tk.Tk()
+    login_window.title("Login")
+    login_window.geometry("400x200")
+
+    
+    username_label = tk.Label(login_window, text="Username:")
+    username_label.pack(pady=5)
+    username_entry = tk.Entry(login_window)
+    username_entry.pack(pady=5)
+
+    
+    password_label = tk.Label(login_window, text="Password:")
+    password_label.pack(pady=5)
+    password_entry = tk.Entry(login_window, show="*")  
+    password_entry.pack(pady=5)
+
+    button_frame = tk.Frame(login_window)
+    button_frame.pack(pady=10)
+
+   
+    hint_button = tk.Button(button_frame, text="Hint", command=toggle_hint)
+    hint_button.pack(side=tk.LEFT, padx=5)
+    
+    hint_label = tk.Label(login_window, text="", fg="blue")
+    hint_label.pack(pady=5)
+
+  
+    login_button = tk.Button(button_frame, text="Login", command=login)
+    login_button.pack(side=tk.LEFT, padx=5)
+
+   
+
+
+
+    login_window.mainloop()
 
 if __name__ == "__main__":
     create_menu()
