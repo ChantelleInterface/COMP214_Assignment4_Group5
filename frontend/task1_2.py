@@ -119,12 +119,12 @@ def update_employee_information():
             connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
             cursor = connection.cursor()
 
-            cursor.execute("SELECT employee_id, first_name, last_name FROM HR_EMPLOYEES")
+            cursor.execute("SELECT employee_id, first_name, last_name, phone_number, salary, email FROM HR_EMPLOYEES")
             row = cursor.fetchone()
 
             if row:
                     for row in cursor:
-                        grid.insert(tk.END, f"{row[0]}: {row[1]} {row[2]}")
+                        grid.insert(tk.END, f"{row[0]}: {row[1]} {row[2]} {row[3]} {row[4]} {row[5]}")
             else:
                 show_employee_label.config(text="Employee records not found")
 
