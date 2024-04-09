@@ -106,6 +106,8 @@ def hire_employee():
     hire_button = tk.Button(hire_window, text="Hire", command=hire, bd=3)
     hire_button.grid(row=len(labels), columnspan=2, pady=10)
 
+
+
 #Task1_3
 def update_employee_information():
     def show_employees():
@@ -258,6 +260,55 @@ def identify_job_description():
     job_description_label = tk.Label(identify_job_window, text="")
     job_description_label.pack(pady=10)
 
+#task 2_2
+def update_job_description():
+    def update_description():
+        job_id_value = job_id_entry.get()
+        new_description = job_description_entry.get()
+
+        connection = None
+        username = 'COMP214_W24_ers_77'
+        password = 'passwords'
+        dsn = '199.212.26.208:1521/SQLD'
+        encoding = 'UTF-8'
+
+        try:
+            connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+            cursor = connection.cursor()
+
+            # Update the job description in the database
+            cursor.execute("UPDATE hr_jobs SET job_description = :new_description WHERE job_id = :job_id",
+                           {"new_description": new_description, "job_id": job_id_value})
+            connection.commit()
+
+            messagebox.showinfo("Success", "Job Description Updated Successfully")
+
+            job_id_entry.delete(0, tk.END)
+            job_description_entry.delete(0, tk.END)
+
+        except cx_Oracle.Error as error:
+            messagebox.showerror("Error", f"Error updating job description: {error}")
+        finally:
+            if connection:
+                connection.close()
+
+    update_job_window = tk.Toplevel()
+    update_job_window.title("Update Job Description")
+
+    job_id_label = tk.Label(update_job_window, text="Job ID:")
+    job_id_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
+    job_id_entry = tk.Entry(update_job_window)
+    job_id_entry.grid(row=0, column=1, padx=10, pady=5)
+
+    job_description_label = tk.Label(update_job_window, text="New Description:")
+    job_description_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
+    job_description_entry = tk.Entry(update_job_window)
+    job_description_entry.grid(row=1, column=1, padx=10, pady=5)
+
+    update_button = tk.Button(update_job_window, text="Update", command=update_description)
+    update_button.grid(row=2, columnspan=2, pady=10)
+
+#task 2_3
 def create_job():
     def create():
         job_id = entry_job_id.get()
@@ -341,6 +392,8 @@ def create_menu():
             menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
             jobs_menu.add_command(label="Identify JOB Description", command=identify_job_description)
             jobs_menu.add_command(label="Create Job", command=create_job)
+            jobs_menu.add_command(label="Update Job Description", command=update_job_description)
+            
             
             dept_menu = tk.Menu(menubar, tearoff=False)
             menubar.add_cascade(label="Departments Main Menu", menu= dept_menu)
