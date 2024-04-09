@@ -136,7 +136,6 @@ def create_employee_hire_sp():
             connection.close()
             
     # Task 3: Create a Procedure called check_salary
-    
     try:
         connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
         
@@ -174,7 +173,6 @@ def create_employee_hire_sp():
             connection.close()
     
     # Task 3: Creating a Trigger called check_salary
-    
     try:
         connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
         
@@ -201,7 +199,7 @@ def create_employee_hire_sp():
         """
 
         cursor.execute(sql_procedure)
-        print("Triggercreated successfully!")
+        print("Trigger created successfully!")
 
     except cx_Oracle.Error as error:
         print(f"Error creating procedure: {error}")
