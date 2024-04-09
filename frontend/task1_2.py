@@ -265,20 +265,19 @@ def create_job():
         min_salary = float(entry_min_salary.get())
         max_salary = min_salary * 2
 
-        # Connect to MySQL database
+        connection = None
+        username = 'COMP214_W24_ers_77'
+        password = 'passwords'
+        dsn = '199.212.26.208:1521/SQLD'
+        encoding = 'UTF-8'
+
         try:
-            conn = mysql.connector.connect(
-            connection = None,
-            user="COMP214_W24_ers_77",
-            password="passwords",
-            dsn = "199.212.26.208:1521/SQLD",
-            encoding = "UTF-8"
-            )
-            cursor = conn.cursor()
+            connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+            cursor = connection.cursor()
 
             # Call the stored procedure
             cursor.callproc('new_job', (job_id, title, min_salary, max_salary))
-            conn.commit()
+            connection.commit()
 
             messagebox.showinfo("Success", "A new job has been created")
 
@@ -286,12 +285,12 @@ def create_job():
             entry_title.delete(0, tk.END)
             entry_min_salary.delete(0, tk.END)
 
-        except mysql.connector.Error as err:
+        except cx_Oracle.Error.Error as err:
             messagebox.showerror("Error", f"Error: {err}")
 
         finally:
             cursor.close()
-            conn.close()
+            connection.close()
 
     create_job_window = tk.Toplevel()
     create_job_window.title("Create Job")
