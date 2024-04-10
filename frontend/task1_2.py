@@ -260,6 +260,102 @@ def identify_job_description():
     job_description_label = tk.Label(identify_job_window, text="")
     job_description_label.pack(pady=10)
 
+def update_job_description():
+    def update_description():
+        selected_job = jobs_listbox.curselection()
+        if not selected_job:
+            messagebox.showerror("Error", "Please select a job to update.")
+            return
+
+        selected_job = int(selected_job[0])  # Get the index of the selected job
+        selected_job_id = jobs[selected_job][0]  # Get the Job ID from the selected job
+        new_title = title_entry.get()
+        new_min_salary = min_salary_entry.get()
+        new_max_salary = max_salary_entry.get()
+
+        connection = None
+        username = 'COMP214_W24_ers_77'
+        password = 'passwords'
+        dsn = '199.212.26.208:1521/SQLD'
+        encoding = 'UTF-8'
+
+        try:
+            connection = cx_Oracle.connect(username, password, dsn, encoding=encoding)
+            cursor = connection.cursor()
+
+            # Update the job information in the database
+            cursor.execute("""
+                UPDATE hr_jobs
+                SET job_title = :new_title,
+                    min_salary = :new_min_salary,
+                    max_salary = :new_max_salary
+                WHERE job_id = :job_id""",
+                {"new_title": new_title, "new_min_salary": new_min_salary,
+                 "new_max_salary": new_max_salary, "job_id": selected_job_id})
+            connection.commit()
+
+            messagebox.showinfo("Success", "Job Information Updated Successfully")
+
+            # Clear entries after update
+            title_entry.delete(0, tk.END)
+            min_salary_entry.delete(0, tk.END)
+            max_salary_entry.delete(0, tk.END)
+
+            # Refresh the listbox
+            show_jobs()
+
+        except cx_Oracle.Error as error:
+            messagebox.showerror("Error", f"Error updating job information: {error}")
+        finally:
+            if connection:
+                connection.close()
+
+    def show_jobs():
+        jobs_listbox.delete(0, tk.END)  # Clear the listbox
+        for job in jobs:
+            jobs_listbox.insert(tk.END, f"{job[0]}: {job[1]} - Min Salary: {job[2]} - Max Salary: {job[3]}")
+
+    update_job_window = tk.Toplevel()
+    update_job_window.title("Update Job Information")
+
+    jobs_frame = tk.Frame(update_job_window)
+    jobs_frame.pack(pady=10)
+
+    jobs_label = tk.Label(jobs_frame, text="Select Job:")
+    jobs_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
+
+    jobs_listbox = tk.Listbox(jobs_frame, height=10, width=50)
+    jobs_listbox.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
+
+    scrollbar = tk.Scrollbar(jobs_frame, orient=tk.VERTICAL, command=jobs_listbox.yview)
+    scrollbar.grid(row=1, column=2, sticky='ns')
+    jobs_listbox.config(yscrollcommand=scrollbar.set)
+
+    jobs_button = tk.Button(jobs_frame, text="Show Jobs", command=show_jobs)
+    jobs_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+    info_frame = tk.Frame(update_job_window)
+    info_frame.pack(pady=10)
+
+    title_label = tk.Label(info_frame, text="Job Title:")
+    title_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
+    title_entry = tk.Entry(info_frame)
+    title_entry.grid(row=0, column=1, padx=10, pady=5)
+
+    min_salary_label = tk.Label(info_frame, text="Min Salary:")
+    min_salary_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
+    min_salary_entry = tk.Entry(info_frame)
+    min_salary_entry.grid(row=1, column=1, padx=10, pady=5)
+
+    max_salary_label = tk.Label(info_frame, text="Max Salary:")
+    max_salary_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
+    max_salary_entry = tk.Entry(info_frame)
+    max_salary_entry.grid(row=2, column=1, padx=10, pady=5)
+
+    update_button = tk.Button(update_job_window, text="Update", command=update_description)
+    update_button.pack(pady=10)
+
+    show_jobs()
 def create_job():
     def create():
         job_id = entry_job_id.get()
@@ -343,11 +439,8 @@ def create_menu():
             menubar.add_cascade(label="Jobs Main Menu", menu= jobs_menu)
             jobs_menu.add_command(label="Identify JOB Description", command=identify_job_description)
             jobs_menu.add_command(label="Create Job", command=create_job)
+            jobs_menu.add_command(label="Update Job Description", command=update_job_description)
             
-            dept_menu = tk.Menu(menubar, tearoff=False)
-            menubar.add_cascade(label="Departments Main Menu", menu= dept_menu)
-            dept_menu.add_command(label="Department Types", command=create_job)
-            dept_menu.add_command(label="Placeholder", command=hire_employee)
 
             # Title 
             title_label = tk.Label(root, text="HR Portal", font=("Times New Roman", 20, "bold"))
